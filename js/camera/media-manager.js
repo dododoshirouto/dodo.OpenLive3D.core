@@ -65,12 +65,12 @@ function startCamera() {
         })
         .catch((e) => {
             console.log(e);
+            console.log("No camera found. Please check your camera settings.\n" + getCMV("CAMERA_ERROR"));
             setCMV(
                 "CURRENT_CAMERA_ID",
-                null
+                ""
             );
-            alert("No camera found. Please check your camera settings.");
-            location.reload(true);
+            // location.reload(true);
         });
 
     return capture;
