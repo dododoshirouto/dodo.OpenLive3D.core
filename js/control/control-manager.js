@@ -74,41 +74,63 @@ function initialize() {
   console.log("controller initialized");
 }
 
+// 変化のあるボーン以外を処理スキップする
+function isDifferentArray(a, b, eps = 1e-4) {
+  if (!a || !b) return true;
+  for (let i = 0; i < a.length; i++) {
+    if (Math.abs(a[i] - b[i]) > eps) return true;
+  }
+  return false;
+}
+
+// 表情の更新頻度を下げる
+let lastExpressionUpdate = 0; // ← グローバルに定義
+let expressionUpdateInterval = 1000 / 10; // ← 100ms間隔（10fps）
+
 function updateVRMMovement(keys) {
   if (currentVrm) {
-    let Cbsp = currentVrm.expressionManager;
+    expressionUpdateInterval = 1000 / getCMV("EXPRESSION_UPDATE_PER_SEC");
+    let skip_expression_update = (Date.now() - lastExpressionUpdate < expressionUpdateInterval);
     let Ch = currentVrm.humanoid;
-    Object.keys(keys["b"]).forEach(function (key) {
-      Cbsp.setValue(key, keys["b"][key]);
-    });
+    if (!skip_expression_update) {
+      lastExpressionUpdate = Date.now();
+      let Cbsp = currentVrm.expressionManager;
+      Object.keys(keys["b"]).forEach(function (key) {
+        Cbsp.setValue(key, keys["b"][key]);
+      });
+    }
     Object.keys(keys["r"]).forEach(function (key) {
       let tnode = Ch.getNormalizedBoneNode(key);
       if (tnode) {
         let crotate = tnode.rotation;
         let trotate = keys["r"][key];
-        crotate.set(...trotate);
-      } else {
-        console.log("missing key:", key);
+        const current = [crotate.x, crotate.y, crotate.z, crotate.w];
+        if (isDifferentArray(current, trotate, 1e-3)) {
+          crotate.set(...trotate);
+        }
       }
     });
     Object.keys(keys["p"]).forEach(function (key) {
       let tnode = Ch.getNormalizedBoneNode(key);
       if (tnode) {
-        let cposition = Ch.getNormalizedBoneNode(key).position;
+        let cposition = tnode.position;
         let tposition = keys["p"][key];
-        cposition.set(...tposition);
-      } else {
-        console.log("missing key:", key);
+        const current = [cposition.x, cposition.y, cposition.z];
+        if (isDifferentArray(current, tposition, 1e-3)) {
+          cposition.set(...tposition);
+        }
       }
     });
     Object.keys(keys["e"]).forEach(function (key) {
       let tnode = Ch.getNormalizedBoneNode(key);
       if (tnode) {
-        let ceuler = Ch.getNormalizedBoneNode(key).rotation;
+        let ceuler = tnode.rotation;
         let teuler = keys["e"][key];
-        ceuler.copy(teuler);
-      } else {
-        console.log("missing key:", key);
+        const current = [ceuler.x, ceuler.y, ceuler.z];
+        const target = [teuler.x, teuler.y, teuler.z];
+        if (isDifferentArray(current, target, 1e-3)) {
+          ceuler.copy(teuler);
+        }
       }
     });
     if (getCMV("TRACKING_MODE") != "Upper-Body") {

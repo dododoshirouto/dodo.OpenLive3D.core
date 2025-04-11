@@ -40,6 +40,10 @@ backgroundeffect.height = window.innerHeight;
 let renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   alpha: true,
+  antialias: false,
+  powerPreference: "low-power", // or "high-performance" もあり
+  stencil: false,
+  depth: true,
 });
 renderer.outputEncoding = THREE.sRGBEncoding;
 renderer.setSize(window.innerWidth, window.innerHeight);

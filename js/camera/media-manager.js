@@ -3,10 +3,10 @@ let capture = document.getElementById("webcam");
 const defaultWidth = 640,
     defaultHeight = 480;
 const scaleWidth = {
-    min: defaultWidth
+    min: defaultWidth,
 };
 const scaleHeight = {
-    min: defaultHeight
+    min: defaultHeight,
 };
 capture.width = defaultWidth;
 capture.height = defaultHeight;
@@ -15,80 +15,114 @@ capture.height = defaultHeight;
 function listCameras(cb) {
     let carr = [];
     let count = 1;
-    navigator.mediaDevices.enumerateDevices().then(darr => {
-        darr.forEach(mediaDevice => {
-            if (mediaDevice.kind === 'videoinput') {
+    navigator.mediaDevices.enumerateDevices().then((darr) => {
+        darr.forEach((mediaDevice) => {
+            if (mediaDevice.kind === "videoinput") {
                 let id = mediaDevice.deviceId;
                 let name = mediaDevice.label || `Camera ${count++}`;
                 carr.push({
-                    "id": id,
-                    "name": name
+                    id: id,
+                    name: name,
                 });
             }
-        })
+        });
         cb(carr);
     });
 }
 
 // get current video device id
 function getCurrentVideoId() {
-    return capture.srcObject.getTracks()[0].getSettings()['deviceId'];
+    return capture.srcObject.getTracks()[0].getSettings()["deviceId"];
 }
 
-// read video from webcam
 function startCamera() {
-    navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-            facingMode: 'user',
-            width: scaleWidth,
-            height: scaleHeight,
-        }
-    }).then(function(stream) {
-        console.log("video initialized");
-        window.stream = stream;
-        capture.srcObject = stream;
-        capture.width = capture.videoWidth;
-        capture.height = capture.videoHeight;
-        setCMV("CURRENT_CAMERA_ID",
-            capture.srcObject.getTracks()[0].getSettings()['deviceId']);
-    });
+    const scaleDiv = getCMV("CAMERA_SCALE_DIV") || 2;
+    const fps = getCMV("CAMERA_FPS") || 15;
+
+    capture.width = Math.floor(defaultWidth / scaleDiv);
+    capture.height = Math.floor(defaultHeight / scaleDiv);
+
+    navigator.mediaDevices
+        .getUserMedia({
+            audio: false,
+            video: {
+                facingMode: "user",
+                width: { ideal: capture.width },
+                height: { ideal: capture.height },
+                frameRate: { ideal: fps },
+            },
+        })
+        .then(function (stream) {
+            console.log("video initialized");
+            window.stream = stream;
+            capture.srcObject = stream;
+            capture.width = width;
+            capture.height = height;
+            setCMV(
+                "CURRENT_CAMERA_ID",
+                capture.srcObject.getTracks()[0].getSettings()["deviceId"]
+            );
+        })
+        .catch((e) => {
+            console.log(e);
+            console.log("No camera found. Please check your camera settings.\n" + getCMV("CAMERA_ERROR"));
+            setCMV(
+                "CURRENT_CAMERA_ID",
+                ""
+            );
+            // location.reload(true);
+        });
+
     return capture;
 }
 
-function stopCamera(){
-    window.stream.getTracks().forEach(track => track.stop());
-    console.log('Camera turned off');
+function stopCamera() {
+    window.stream.getTracks().forEach((track) => track.stop());
+    console.log("Camera turned off");
 }
 
 // change current video to a new source
 function setVideoStream(deviceId) {
     // stop current video
-    capture.srcObject.getTracks().forEach(track => {
+    capture.srcObject.getTracks().forEach((track) => {
         track.stop();
     });
-    window.stream.getTracks().forEach(track => {
+    window.stream.getTracks().forEach((track) => {
         track.stop();
     });
-    navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: {
-            deviceId: deviceId ? {
-                exact: deviceId
-            } : undefined,
-            width: scaleWidth,
-            height: scaleHeight,
-        }
-    }).then(function(stream) {
-        console.log("video stream set: ", deviceId);
-        window.stream = stream;
-        capture.srcObject = stream;
-        capture.width = capture.videoWidth;
-        capture.height = capture.videoHeight;
-        setCMV("RESET_CAMERA", true);
-        setCMV("CURRENT_CAMERA_ID",
-            capture.srcObject.getTracks()[0].getSettings()['deviceId']);
-    });
+
+    const scaleDiv = getCMV("CAMERA_SCALE_DIV") || 2;
+    const fps = getCMV("CAMERA_FPS") || 15;
+
+    capture.width = Math.floor(defaultWidth / scaleDiv);
+    capture.height = Math.floor(defaultHeight / scaleDiv);
+
+    navigator.mediaDevices
+        .getUserMedia({
+            audio: false,
+            video: {
+                deviceId: deviceId
+                    ? {
+                        exact: deviceId,
+                    }
+                    : undefined,
+                width: { ideal: capture.width },
+                height: { ideal: capture.height },
+                frameRate: { ideal: fps },
+            },
+        })
+        .then(function (stream) {
+            console.log("video stream set: ", deviceId);
+            window.stream = stream;
+            capture.srcObject = stream;
+            capture.width = capture.videoWidth;
+            capture.height = capture.videoHeight;
+            setCMV("RESET_CAMERA", true);
+            setCMV(
+                "CURRENT_CAMERA_ID",
+                capture.srcObject.getTracks()[0].getSettings()["deviceId"]
+            );
+        });
 }
 
 // video width and height
@@ -120,8 +154,8 @@ function checkImage() {
 }
 
 let capImage = document.createElement("canvas");
-let capCtx = capImage.getContext('2d', {
-    willReadFrequently: true
+let capCtx = capImage.getContext("2d", {
+    willReadFrequently: true,
 });
 capImage.width = defaultWidth;
 capImage.height = defaultHeight;

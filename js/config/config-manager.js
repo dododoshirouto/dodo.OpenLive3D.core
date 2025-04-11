@@ -114,6 +114,9 @@ let defaultConfig = {
   TEST_SAFARI_ENTRY: false,
   // additional parameters
   ENABLE_RIMLIGHT: true,
+  CAMERA_SCALE_DIV: 2,
+  CAMERA_FPS: 15,
+  EXPRESSION_UPDATE_PER_SEC: 10,
 };
 
 function getDefaultCMV(key) {
@@ -376,7 +379,7 @@ function getBinaryCM() {
     "UI_TRACKING_MODE_COLLAPSE",
     "UI_MOOD_COLLAPSE",
     "POSITION_TRACKING",
-
+    // additional parameters
     "ENABLE_RIMLIGHT",
   ];
 }
@@ -732,6 +735,27 @@ function getConfigModifiers() {
         title: "Collapse Mood UI",
         describe: "Change the UI selection framework format",
         valid: [true, false],
+      },
+    ],
+    OPTIMIZE: [
+      {
+        key: "CAMERA_SCALE_DIV",
+        title: "Resolution Scale",
+        describe:
+          "Camera resolution scale: 1 = original size, 2 = half, 4 = quarter",
+        range: [1, 8],
+      },
+      {
+        key: "CAMERA_FPS",
+        title: "Camera FPS",
+        describe: "Camera input frame rate",
+        range: [1, 60],
+      },
+      {
+        key: "EXPRESSION_UPDATE_PER_SEC",
+        title: "Expression Update Per Sec",
+        describe: "Frequency of updating Expression (fps)",
+        range: [1, 60],
       },
     ],
   };
