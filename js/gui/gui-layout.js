@@ -508,7 +508,7 @@ function createLayout() {
   exportbtn.setAttribute("type", "button");
   exportbtn.setAttribute("value", "Export to File");
   exportbtn.onclick = function () {
-    let json = JSON.stringify(getSavedConfigString(), null, 2);
+    let json = getSavedConfigString();
     let blob = new Blob([json], { type: "application/json" });
     let url = URL.createObjectURL(blob);
     let a = document.createElement("a");
@@ -533,7 +533,12 @@ function createLayout() {
           });
           createLayout(); // UI再生成
           setBackGround(); // 背景再設定
-          alert("設定を読み込みました");
+          let do_reload = confirm(
+            "設定を読み込みました。\nページをリロードしますか？"
+          );
+          if (do_reload) {
+            location.reload(true);
+          }
         } catch (e) {
           alert("読み込み失敗：" + e);
         }
@@ -548,25 +553,40 @@ function createLayout() {
   settingsaveloadbox.appendChild(saveload_label_string);
 
   // テキストエリア（コピー用）
-  let textArea = document.createElement("input");
-  textArea.style.width = "100%";
-  textArea.onclick = "this.select();";
-  textArea.value = getSavedConfigString();
-  settingsaveloadbox.appendChild(textArea);
+  let textArea_save = document.createElement("input");
+  textArea_save.style.width = "100%";
+  textArea_save.onclick = "this.select();";
+  textArea_save.value = getSavedConfigString();
+  textArea_save.readOnly = true;
+  textArea_save.style.cursor = "pointer";
+  textArea_save.title = "Save Settings";
+  settingsaveloadbox.appendChild(textArea_save);
 
-  // リロードボタン
+  // テキストエリア（ペースト用）
+  let textArea_load = document.createElement("input");
+  textArea_load.style.width = "100%";
+  textArea_load.onclick = "this.select();";
+  textArea_load.title = "Load Settings";
+  settingsaveloadbox.appendChild(textArea_load);
+
+  // リロードボタン（旧: Reload from Clipboard）
   let reloadbtn = document.createElement("input");
   reloadbtn.setAttribute("type", "button");
-  reloadbtn.setAttribute("value", "Reload from Clipboard");
+  reloadbtn.setAttribute("value", "Load from Text Input");
   reloadbtn.onclick = function () {
     try {
-      let json = JSON.parse(textArea.value);
+      let json = JSON.parse(textArea_load.value);
       Object.keys(json).forEach((key) => {
         setCMV(key, json[key]);
       });
       createLayout(); // UI再生成
       setBackGround(); // 背景再設定
-      alert("テキスト設定を読み込みました");
+      let do_reload = confirm(
+        "設定を読み込みました。\nページをリロードしますか？"
+      );
+      if (do_reload) {
+        location.reload(true);
+      }
     } catch (e) {
       alert("読み込み失敗：" + e);
     }
