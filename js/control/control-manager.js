@@ -74,13 +74,22 @@ function initialize() {
   console.log("controller initialized");
 }
 
+// 表情の更新頻度を下げる
+let lastExpressionUpdate = 0; // ← グローバルに定義
+let expressionUpdateInterval = 1000 / 10; // ← 100ms間隔（10fps）
+
 function updateVRMMovement(keys) {
   if (currentVrm) {
-    let Cbsp = currentVrm.expressionManager;
+    expressionUpdateInterval = 1000 / getCMV("EXPRESSION_UPDATE_PER_SEC");
+    let skip_expression_update = (Date.now() - lastExpressionUpdate < expressionUpdateInterval);
     let Ch = currentVrm.humanoid;
-    Object.keys(keys["b"]).forEach(function (key) {
-      Cbsp.setValue(key, keys["b"][key]);
-    });
+    if (!skip_expression_update) {
+      lastExpressionUpdate = Date.now();
+      let Cbsp = currentVrm.expressionManager;
+      Object.keys(keys["b"]).forEach(function (key) {
+        Cbsp.setValue(key, keys["b"][key]);
+      });
+    }
     Object.keys(keys["r"]).forEach(function (key) {
       let tnode = Ch.getNormalizedBoneNode(key);
       if (tnode) {

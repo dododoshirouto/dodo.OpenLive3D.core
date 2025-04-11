@@ -116,6 +116,7 @@ let defaultConfig = {
   ENABLE_RIMLIGHT: true,
   CAMERA_SCALE_DIV: 2,
   CAMERA_FPS: 15,
+  EXPRESSION_UPDATE_PER_SEC: 10,
 };
 
 function getDefaultCMV(key) {
@@ -748,6 +749,12 @@ function getConfigModifiers() {
         key: "CAMERA_FPS",
         title: "Camera FPS",
         describe: "Camera input frame rate",
+        range: [1, 60],
+      },
+      {
+        key: "EXPRESSION_UPDATE_PER_SEC",
+        title: "Expression Update Per Sec",
+        describe: "Frequency of updating Expression (fps)",
         range: [1, 60],
       },
     ],
