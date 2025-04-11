@@ -35,26 +35,6 @@ function getCurrentVideoId() {
     return capture.srcObject.getTracks()[0].getSettings()["deviceId"];
 }
 
-// read video from webcam
-// function startCamera() {
-//     navigator.mediaDevices.getUserMedia({
-//         audio: false,
-//         video: {
-//             facingMode: 'user',
-//             width: scaleWidth,
-//             height: scaleHeight,
-//         }
-//     }).then(function(stream) {
-//         console.log("video initialized");
-//         window.stream = stream;
-//         capture.srcObject = stream;
-//         capture.width = capture.videoWidth;
-//         capture.height = capture.videoHeight;
-//         setCMV("CURRENT_CAMERA_ID",
-//             capture.srcObject.getTracks()[0].getSettings()['deviceId']);
-//     });
-//     return capture;
-// }
 function startCamera() {
     const scaleDiv = getCMV("CAMERA_SCALE_DIV") || 2;
     const fps = getCMV("CAMERA_FPS") || 15;
@@ -82,6 +62,15 @@ function startCamera() {
                 "CURRENT_CAMERA_ID",
                 capture.srcObject.getTracks()[0].getSettings()["deviceId"]
             );
+        })
+        .catch((e) => {
+            console.log(e);
+            setCMV(
+                "CURRENT_CAMERA_ID",
+                null
+            );
+            alert("No camera found. Please check your camera settings.");
+            location.reload(true);
         });
 
     return capture;
