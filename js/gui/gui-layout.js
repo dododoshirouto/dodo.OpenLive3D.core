@@ -492,6 +492,87 @@ function createLayout() {
   musicbox.appendChild(musicList);
   openIndex();
 
+  // setting save load
+  let settingsaveloadbtn = document.getElementById("settingsaveloadbutton");
+  settingsaveloadbtn.innerHTML = "Setting Save / Load";
+
+  let settingsaveloadbox = document.getElementById("settingsaveload");
+  settingsaveloadbox.innerHTML = "";
+
+  let saveload_label_file = document.createElement("p");
+  saveload_label_file.innerText = "Save / Load with JSON File";
+  settingsaveloadbox.appendChild(saveload_label_file);
+
+  // export button
+  let exportbtn = document.createElement("input");
+  exportbtn.setAttribute("type", "button");
+  exportbtn.setAttribute("value", "Export to File");
+  exportbtn.onclick = function () {
+    let json = JSON.stringify(getSavedConfigString(), null, 2);
+    let blob = new Blob([json], { type: "application/json" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "openlive3d_settings.json";
+    a.click();
+  };
+  settingsaveloadbox.appendChild(exportbtn);
+
+  // import button
+  let importinput = document.createElement("input");
+  importinput.setAttribute("type", "file");
+  importinput.setAttribute("accept", ".json");
+  importinput.onchange = function () {
+    if (importinput.files.length > 0) {
+      let reader = new FileReader();
+      reader.onload = function (e) {
+        try {
+          let json = JSON.parse(e.target.result);
+          Object.keys(json).forEach((key) => {
+            setCMV(key, json[key]);
+          });
+          createLayout(); // UI再生成
+          setBackGround(); // 背景再設定
+          alert("設定を読み込みました");
+        } catch (e) {
+          alert("読み込み失敗：" + e);
+        }
+      };
+      reader.readAsText(importinput.files[0]);
+    }
+  };
+  settingsaveloadbox.appendChild(importinput);
+
+  let saveload_label_string = document.createElement("p");
+  saveload_label_string.innerText = "Save / Load with JSON Text";
+  settingsaveloadbox.appendChild(saveload_label_string);
+
+  // テキストエリア（コピー用）
+  let textArea = document.createElement("input");
+  textArea.style.width = "100%";
+  textArea.onclick = "this.select();";
+  textArea.value = getSavedConfigString();
+  settingsaveloadbox.appendChild(textArea);
+
+  // リロードボタン
+  let reloadbtn = document.createElement("input");
+  reloadbtn.setAttribute("type", "button");
+  reloadbtn.setAttribute("value", "Reload from Clipboard");
+  reloadbtn.onclick = function () {
+    try {
+      let json = JSON.parse(textArea.value);
+      Object.keys(json).forEach((key) => {
+        setCMV(key, json[key]);
+      });
+      createLayout(); // UI再生成
+      setBackGround(); // 背景再設定
+      alert("テキスト設定を読み込みました");
+    } catch (e) {
+      alert("読み込み失敗：" + e);
+    }
+  };
+  settingsaveloadbox.appendChild(reloadbtn);
+
   // config modifier
   let confbox = document.getElementById("confbox");
   confbox.innerHTML = "";
