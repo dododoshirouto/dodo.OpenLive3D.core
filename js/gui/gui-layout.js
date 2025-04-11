@@ -461,36 +461,36 @@ function createLayout() {
   });
 
   //music
-  let songCounter = 0;
-  let musicboxbtn = document.getElementById("musicboxbutton");
-  musicboxbtn.innerHTML = getL("Music");
-  let musicbox = document.getElementById("musicbox");
-  musicbox.innerHTML = "";
-  let musicbtn = document.createElement("input");
-  musicbtn.setAttribute("type", "file");
-  musicbtn.setAttribute("accept", ".mp3");
-  musicbox.appendChild(musicbtn);
-  musicbtn.onchange = function () {
-    if (musicbtn.files.length > 0) {
-      let file = musicbtn.files[0];
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const arrayBuffer = event.target.result;
-        songCounter++;
-        const song = { id: songCounter, name: file.name, data: arrayBuffer };
-        songList.push(song);
-        addSong(song);
-        updateMusicList();
-      };
-      reader.readAsArrayBuffer(file);
-      musicbtn.value = "";
-    }
-  };
-  musicbox.appendChild(musicbtn);
-  let musicList = document.createElement("div");
-  musicList.id = "musiclist";
-  musicbox.appendChild(musicList);
-  openIndex();
+  // let songCounter = 0;
+  // let musicboxbtn = document.getElementById("musicboxbutton");
+  // musicboxbtn.innerHTML = getL("Music");
+  // let musicbox = document.getElementById("musicbox");
+  // musicbox.innerHTML = "";
+  // let musicbtn = document.createElement("input");
+  // musicbtn.setAttribute("type", "file");
+  // musicbtn.setAttribute("accept", ".mp3");
+  // musicbox.appendChild(musicbtn);
+  // musicbtn.onchange = function () {
+  //   if (musicbtn.files.length > 0) {
+  //     let file = musicbtn.files[0];
+  //     const reader = new FileReader();
+  //     reader.onload = function (event) {
+  //       const arrayBuffer = event.target.result;
+  //       songCounter++;
+  //       const song = { id: songCounter, name: file.name, data: arrayBuffer };
+  //       songList.push(song);
+  //       addSong(song);
+  //       updateMusicList();
+  //     };
+  //     reader.readAsArrayBuffer(file);
+  //     musicbtn.value = "";
+  //   }
+  // };
+  // musicbox.appendChild(musicbtn);
+  // let musicList = document.createElement("div");
+  // musicList.id = "musiclist";
+  // musicbox.appendChild(musicList);
+  // openIndex();
 
   // setting save load
   let settingsaveloadbtn = document.getElementById("settingsaveloadbutton");
