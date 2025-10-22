@@ -6,6 +6,7 @@ function getDefaultInfo() {
         "leftEyeOpen": 0,
         "rightEyeOpen": 0,
         "irisPos": 0,
+        "irisPosVertical": 0,
         "mouth": 0,
         "brows": 0,
         "x": 0,

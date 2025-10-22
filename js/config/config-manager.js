@@ -42,6 +42,8 @@ let defaultConfig = {
   EYE_STABLIZE_RATIO: 0.2,
   IRIS_POS_OFFSET: 0.0,
   IRIS_POS_RATIO: 0.5,
+  IRIS_POS_VERTICAL_OFFSET: 0.0,
+  IRIS_POS_VERTICAL_RATIO: 0.5,
   RIGHT_EYE_CLOSE_THRESHOLD: 0.2,
   RIGHT_EYE_OPEN_THRESHOLD: 0.25,
   RIGHT_EYE_SQUINT_RATIO: 0.6,
@@ -616,6 +618,20 @@ function getConfigModifiers() {
         key: "IRIS_POS_RATIO",
         title: "Iris Ratio",
         describe: "The ratio of iris turning speed, default 5.0. Range(0, 20)",
+        range: [0, 20],
+      },
+      {
+        key: "IRIS_POS_VERTICAL_OFFSET",
+        title: "Iris Vertical Offset",
+        describe:
+          "The offset of iris vertical turning, default 0.0. Range(-1, 1)",
+        range: [0, 2],
+      },
+      {
+        key: "IRIS_POS_VERTICAL_RATIO",
+        title: "Iris Vertical Ratio",
+        describe:
+          "The ratio of iris vertical turning speed, default 0.5. Range(0, 20)",
         range: [0, 20],
       },
     ],

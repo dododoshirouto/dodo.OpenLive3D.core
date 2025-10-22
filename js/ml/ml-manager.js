@@ -178,10 +178,13 @@ function extractMouthEyes(keys) {
         let mouthRatio = ratioLimit((keys['mouth'] - getCMV("MOUTH_OPEN_OFFSET")) * getCMV('MOUTH_RATIO'));
         meinfo['b']['aa'] = mouthRatio;
         // irises
-        let irispos = keys['irisPos'];
-        let irisY = (irispos - getCMV('IRIS_POS_OFFSET')) * getCMV('IRIS_POS_RATIO');
-        meinfo['r']['rightEye'] = [0, irisY, 0];
-        meinfo['r']['leftEye'] = [0, irisY, 0];
+        let irisYawSource = keys['irisPos'];
+        let irisPitchSource = keys['irisPosVertical'] ?? 0;
+        let irisBaseRatio = getCMV('IRIS_POS_RATIO');
+        let irisY = (irisYawSource - getCMV('IRIS_POS_OFFSET')) * irisBaseRatio;
+        let irisX = - (irisPitchSource - getCMV('IRIS_POS_VERTICAL_OFFSET')) * irisBaseRatio * getCMV('IRIS_POS_VERTICAL_RATIO');
+        meinfo['r']['rightEye'] = [irisX, irisY, 0];
+        meinfo['r']['leftEye'] = [irisX, irisY, 0];
         // brows
         let browspos = Math.min(1, Math.max(0, keys['brows'] - getCMV("BROWS_OFFSET")) * getCMV("BROWS_RATIO"));
         meinfo['b']['Brows up'] = browspos;
