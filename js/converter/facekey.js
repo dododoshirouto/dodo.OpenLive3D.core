@@ -75,7 +75,7 @@ function getKeyType(key) {
         return "head";
     } else if (["leftEyeOpen", "rightEyeOpen", "irisPos", "irisPosVertical"].includes(key)) {
         return "eye";
-    } else if (["mouth"].includes(key)) {
+    } else if (["mouth", "mouthWidth"].includes(key)) {
         return "mouth";
     } else {
         return "body";
@@ -95,7 +95,13 @@ function face2Info(face) {
     let irisPosVertical = getVerticalPosRatio(face["lefteye"]) + getVerticalPosRatio(face["righteye"]) - 1;
     keyInfo["irisPos"] = irisPos;
     keyInfo["irisPosVertical"] = Math.max(-1, Math.min(1, irisPosVertical));
-    keyInfo["mouth"] = Math.max(0, getOpenRatio(face["mouth"]) - Math.abs(headRotate[1] / 10));
+    let mouth = face["mouth"];
+    let mouthWidth = distance3d(mouth[0], mouth[1]);
+    let mouthHeightRatio = getOpenRatio(mouth);
+    let headWidth = distance3d(face["head"][0], face["head"][1]);
+    let widthRatio = headWidth > 0 ? mouthWidth / headWidth : 0;
+    keyInfo["mouth"] = Math.max(0, mouthHeightRatio - Math.abs(headRotate[1] / 10));
+    keyInfo["mouthWidth"] = widthRatio;
     keyInfo["brows"] = getBrowsRatio(face);
     keyInfo["x"] = headXYZ[0];
     keyInfo["y"] = headXYZ[1];

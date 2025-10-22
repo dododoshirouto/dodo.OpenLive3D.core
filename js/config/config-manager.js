@@ -32,6 +32,12 @@ let defaultConfig = {
   MOUTH_OPEN_OFFSET: 0.015,
   MOUTH_RATIO: 5,
   MOUTH_STABLIZE_RATIO: 0.01,
+  MOUTH_SHAPE_MODE: "Open",
+  MOUTH_WIDTH_WIDE_MIN: 0.32,
+  MOUTH_WIDTH_WIDE_MAX: 0.45,
+  MOUTH_WIDTH_NARROW_MIN: 0.16,
+  MOUTH_WIDTH_NARROW_MAX: 0.28,
+  MOUTH_SHAPE_GAIN: 1,
   BROWS_OFFSET: 0.49,
   BROWS_RATIO: 10,
   BROWS_STABLIZE_RATIO: 0.01,
@@ -353,7 +359,7 @@ function getBinaryCM() {
 }
 
 function getSelectCM() {
-  return ["LANGUAGE", "TRACKING_MODE"];
+  return ["LANGUAGE", "TRACKING_MODE", "MOUTH_SHAPE_MODE"];
 }
 
 function getSideBoxes() {
@@ -514,6 +520,48 @@ function getConfigModifiers() {
         describe:
           "Motion become more stable with larger value, but small gesture become harder to track. Avatar stop moving when the value is 1. Range(0, 0.95)",
         range: [0, 0.95],
+      },
+      {
+        key: "MOUTH_SHAPE_MODE",
+        title: "Mouth Shape Mode",
+        describe:
+          "Choose between simple open-close or vowel blendshape mode.",
+        valid: ["Open", "Blend"],
+      },
+      {
+        key: "MOUTH_WIDTH_WIDE_MIN",
+        title: "Mouth Wide Start",
+        describe:
+          "Mouth width ratio where the shape starts blending to wide vowels. Range(0, 1)",
+        range: [0, 1],
+      },
+      {
+        key: "MOUTH_WIDTH_WIDE_MAX",
+        title: "Mouth Wide Max",
+        describe:
+          "Mouth width ratio considered fully wide for vowel shaping. Range(0, 1)",
+        range: [0, 1],
+      },
+      {
+        key: "MOUTH_WIDTH_NARROW_MIN",
+        title: "Mouth Narrow Min",
+        describe:
+          "Mouth width ratio considered fully narrow for pursed vowel shaping. Range(0, 1)",
+        range: [0, 1],
+      },
+      {
+        key: "MOUTH_WIDTH_NARROW_MAX",
+        title: "Mouth Narrow Max",
+        describe:
+          "Mouth width ratio where the shape stops being treated as narrow. Range(0, 1)",
+        range: [0, 1],
+      },
+      {
+        key: "MOUTH_SHAPE_GAIN",
+        title: "Mouth Shape Gain",
+        describe:
+          "Gain applied to calculated vowel blendshape weights. Range(0, 3)",
+        range: [0, 3],
       },
     ],
     BROWS: [

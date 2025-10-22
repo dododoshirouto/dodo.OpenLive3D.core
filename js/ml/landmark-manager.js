@@ -8,6 +8,7 @@ function getDefaultInfo() {
         "irisPos": 0,
         "irisPosVertical": 0,
         "mouth": 0,
+        "mouthWidth": 0,
         "brows": 0,
         "x": 0,
         "y": 0,

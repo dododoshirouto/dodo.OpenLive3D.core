@@ -197,6 +197,42 @@ let languageBox = [
     en: "Motion become more stable with larger value, but small gesture become harder to track. Avatar stop moving when the value is 1. Range(0, 0.95)",
   },
   {
+    en: "Mouth Shape Mode",
+  },
+  {
+    en: "Choose between simple open-close or vowel blendshape mode.",
+  },
+  {
+    en: "Mouth Wide Start",
+  },
+  {
+    en: "Mouth width ratio where the shape starts blending to wide vowels. Range(0, 1)",
+  },
+  {
+    en: "Mouth Wide Max",
+  },
+  {
+    en: "Mouth width ratio considered fully wide for vowel shaping. Range(0, 1)",
+  },
+  {
+    en: "Mouth Narrow Min",
+  },
+  {
+    en: "Mouth width ratio considered fully narrow for pursed vowel shaping. Range(0, 1)",
+  },
+  {
+    en: "Mouth Narrow Max",
+  },
+  {
+    en: "Mouth width ratio where the shape stops being treated as narrow. Range(0, 1)",
+  },
+  {
+    en: "Mouth Shape Gain",
+  },
+  {
+    en: "Gain applied to calculated vowel blendshape weights. Range(0, 3)",
+  },
+  {
     en: "Brows Open Offset",
   },
   {
