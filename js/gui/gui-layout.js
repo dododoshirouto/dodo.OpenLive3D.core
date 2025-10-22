@@ -1,17 +1,14 @@
 // layout
 let sidebar = document.getElementById("thesidebar");
-let moodbar = document.getElementById("themoodbar");
 let posebar = document.getElementById("theposebar");
 let systembox = document.getElementById("systembox");
 systembox.onclick = function () {
   console.log("click SYSTEM_IMG");
   if (sidebar.style.display == "none") {
     sidebar.style.display = "block";
-    moodbar.style.display = "none";
     posebar.style.display = "none";
   } else {
     sidebar.style.display = "none";
-    moodbar.style.display = "block";
     posebar.style.display = "block";
   }
   if (checkCameraPaused()) {
@@ -651,7 +648,7 @@ function createLayout() {
         item.onclick = function myFunction() {
           setCMV(configitem["key"], item.checked);
           if (key == "UI") {
-            createMoodLayout();
+            createSidebarLayout();
           }
           if (configitem["key"] === "TOGGLE_CAMERA") {
             if (item.checked) {
@@ -823,26 +820,17 @@ function createCameraLayout() {
   });
 }
 
-function createMoodLayout() {
-  // reset MoodLayout
-  moodbar.innerHTML = "";
-  let tmp = document.createElement("div");
-  tmp.className = "w3-bar-item";
-  tmp.style.height = "80px";
-  tmp.style.color = "#0000";
-  tmp.innerHTML = ".";
-  moodbar.appendChild(tmp);
-
+function createSidebarLayout() {
   // reset PoseLayout
   posebar.innerHTML = "";
-  let tmp2 = document.createElement("div");
-  tmp2.className = "w3-bar-item";
-  tmp2.style.height = "10px";
-  tmp2.style.color = "#0000";
-  tmp2.innerHTML = ".";
-  posebar.appendChild(tmp2);
+  let spacer = document.createElement("div");
+  spacer.className = "w3-bar-item";
+  spacer.style.height = "10px";
+  spacer.style.color = "#0000";
+  spacer.innerHTML = ".";
+  posebar.appendChild(spacer);
 
-  // hand-on hand-no
+  // tracking mode icons
   for (let i = 0; i < availableTrackingMode.length; i++) {
     let trackingmode = availableTrackingMode[i];
     let handdiv = document.createElement("div");
@@ -879,58 +867,9 @@ function createMoodLayout() {
     }
   }
 
-  // mood
-  let moods = getAllMoods();
-  for (let i = 0; i < moods.length; i++) {
-    let mood = moods[i];
-    if (checkVRMMood(mood)) {
-      let mooddiv = document.createElement("div");
-      mooddiv.id = "mooddiv_" + mood;
-      if (getCMV("UI_MOOD_COLLAPSE")) {
-        mooddiv.style.display = "none";
-      }
-      let moodobj = document.createElement("img");
-      moodobj.id = "moodobj_" + mood;
-      moodobj.src = "asset/mood/" + mood + ".png";
-      moodobj.style.width = "30px";
-      moodobj.style.cursor = "pointer";
-      moodobj.style.marginLeft = "12px";
-      moodobj.onclick = function () {
-        if (getCMV("IN_MOOD_SELECT") || !getCMV("UI_MOOD_COLLAPSE")) {
-          setCMV("IN_MOOD_SELECT", false);
-          setMoodSelect(mood);
-          setMood(mood);
-        } else {
-          setCMV("IN_MOOD_SELECT", true);
-          displayAllMood();
-        }
-      };
-      mooddiv.appendChild(moodobj);
-      mooddiv.appendChild(document.createElement("br"));
-      mooddiv.appendChild(document.createElement("br"));
-      moodbar.appendChild(mooddiv);
-    }
-
-    if (i == moods.length - 1) {
-      setMoodSelect(getCMV("DEFAULT_MOOD"));
-    }
-  }
-
-  moodbar.onmouseout = function (e) {
-    if (
-      e.target &&
-      e.relatedTarget &&
-      !(
-        e.target.id[7] == "_" &&
-        e.relatedTarget.id[7] == "_" &&
-        e.target.id.slice(0, 4) == e.relatedTarget.id.slice(0, 4)
-      )
-    ) {
-      setCMV("IN_TRACKING_MODE_SELECT", false);
-      setCMV("IN_MOOD_SELECT", false);
-      setTrackingModeSelect(getCMV("TRACKING_MODE"));
-      setMoodSelect(getCMV("MOOD"));
-    }
+  posebar.onmouseleave = function () {
+    setCMV("IN_TRACKING_MODE_SELECT", false);
+    setTrackingModeSelect(getCMV("TRACKING_MODE"));
   };
 }
 
@@ -939,17 +878,6 @@ function displayAllTrackingMode() {
     let trackingmode = availableTrackingMode[i];
     let handdiv = document.getElementById("handdiv_" + trackingmode);
     handdiv.style.display = "block";
-  }
-}
-
-function displayAllMood() {
-  let moods = getAllMoods();
-  for (let i = 0; i < moods.length; i++) {
-    let mood = moods[i];
-    if (checkVRMMood(mood)) {
-      let mooddiv = document.getElementById("mooddiv_" + mood);
-      mooddiv.style.display = "block";
-    }
   }
 }
 
@@ -971,29 +899,6 @@ function setTrackingModeSelect(newtrackingmode) {
     handobj.src = "asset/hand/" + newtrackingmode + ".png";
     if (getCMV("UI_TRACKING_MODE_COLLAPSE")) {
       handdiv.style.display = "block";
-    }
-  }
-}
-
-function setMoodSelect(newmood) {
-  let moods = getAllMoods();
-  for (let i = 0; i < moods.length; i++) {
-    let mood = moods[i];
-    if (checkVRMMood(mood)) {
-      let mooddiv = document.getElementById("mooddiv_" + mood);
-      mooddiv.style.filter = "";
-      if (getCMV("UI_MOOD_COLLAPSE")) {
-        mooddiv.style.display = "none";
-      } else {
-        mooddiv.style.display = "block";
-      }
-    }
-  }
-  let mooddiv = document.getElementById("mooddiv_" + newmood);
-  if (mooddiv) {
-    mooddiv.style.filter = "invert(1)";
-    if (getCMV("UI_MOOD_COLLAPSE")) {
-      mooddiv.style.display = "block";
     }
   }
 }

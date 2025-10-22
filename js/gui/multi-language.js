@@ -107,18 +107,6 @@ let languageBox = [
     en: "The moving length of breathing effect, default as 1. Range(0, 10)",
   },
   {
-    en: "MOOD_AUTO Ratio",
-  },
-  {
-    en: "The dramatic-degree of the auto-mood detection, default as 2. Range(0, 10)",
-  },
-  {
-    en: "MOOD_AUTO Offset",
-  },
-  {
-    en: "Auto-mood works when the value is larger than the offset, default as 0.1. Range(0, 1)",
-  },
-  {
     en: "3D_FPS Limit",
   },
   {

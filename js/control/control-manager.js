@@ -32,8 +32,7 @@ function loadVRM(vrmurl) {
         z: head.up.z + head.position.z,
       };
       resetCameraPos(pos);
-      resetVRMMood();
-      createMoodLayout();
+      createSidebarLayout();
       console.log("vrm model loaded");
       console.log(currentVrm);
     },
@@ -46,7 +45,6 @@ function loadVRM(vrmurl) {
       }
     }
   );
-  setMood(getCMV("DEFAULT_MOOD"));
   setLogAPI(getSavedConfigString());
 }
 
@@ -164,30 +162,10 @@ function updatePosition(keys) {
   }
 }
 
-function updateMood() {
-  if (mood != oldmood) {
-    console.log(mood, oldmood);
-    let Cbsp = currentVrm.expressionManager;
-    if (oldmood != "auto") {
-      Cbsp.setValue(moodMap[oldmood], 0);
-    } else {
-      Cbsp.setValue(Tvrmsbspn.Angry, 0);
-      Cbsp.setValue(Tvrmsbspn.Sad, 0);
-      Cbsp.setValue(Tvrmsbspn.Happy, 0);
-      Cbsp.setValue(Tvrmsbspn.Ee, 0);
-    }
-    if (mood != "auto") {
-      Cbsp.setValue(moodMap[mood], 1);
-    }
-    oldmood = mood;
-  }
-}
-
 function updateInfo() {
   let minfo = getVRMMovement();
   updateVRMMovement(minfo);
   updatePosition(minfo);
-  updateMood();
 }
 
 function exportRotate() {
@@ -213,51 +191,6 @@ function exportRotate() {
     console.log("VRM not loaded");
   }
   return vrmRotate;
-}
-
-// Mood
-let defaultMoodList = [
-  "auto",
-  "angry",
-  "sorrow",
-  "fun",
-  "joy",
-  "surprised",
-  "relaxed",
-  "neutral",
-];
-let moodMap = {
-  auto: "AUTO_MOOD_DETECTION",
-  angry: Tvrmsbspn.Angry,
-  sorrow: Tvrmsbspn.Sad,
-  fun: Tvrmsbspn.Happy,
-  surprised: "Surprised",
-  relaxed: Tvrmsbspn.Relaxed,
-  neutral: Tvrmsbspn.Neutral,
-};
-let mood = "auto";
-let oldmood = "auto";
-
-function getAllMoods() {
-  let validmoods = [];
-  Object.keys(moodMap).forEach(function (key) {
-    if (defaultMoodList.includes(key)) {
-      if (getCMV("MOOD_" + key.toUpperCase())) {
-        validmoods.push(key);
-      }
-    }
-  });
-  Object.keys(moodMap).forEach(function (key) {
-    if (!defaultMoodList.includes(key)) {
-      validmoods.push(key);
-    }
-  });
-  return validmoods;
-}
-
-function setMood(newmood) {
-  mood = newmood;
-  setCMV("MOOD", newmood);
 }
 
 function exportExpression() {
@@ -352,61 +285,6 @@ async function viLoop() {
       hideLoadbox();
       console.log("ml & visual loops validated");
     }
-  }
-}
-
-// mood check
-let noMoods = [];
-
-function resetVRMMood() {
-  noMoods = [];
-  Object.keys(moodMap).forEach(function (i) {
-    if (!defaultMoodList.includes(i)) {
-      delete moodMap[i];
-    }
-  });
-  if (currentVrm) {
-    let defaultMoodLength = Object.keys(moodMap).length;
-    for (tmood of currentVrm.expressionManager.blinkExpressionNames) {
-      noMoods.push(tmood);
-    }
-    for (tmood of currentVrm.expressionManager.lookAtExpressionNames) {
-      noMoods.push(tmood);
-    }
-    for (tmood of currentVrm.expressionManager.mouthExpressionNames) {
-      noMoods.push(tmood);
-    }
-    let unknownMood = currentVrm.expressionManager._expressionMap;
-    Object.keys(unknownMood).forEach(function (newmood) {
-      if (!noMoods.includes(newmood)) {
-        let newmoodid = Object.keys(moodMap).length - defaultMoodLength;
-        if (!Object.values(moodMap).includes(newmood)) {
-          if (newmoodid < getCMV("MOOD_EXTRA_LIMIT")) {
-            moodMap[newmoodid.toString()] = newmood;
-          }
-        }
-      }
-    });
-  }
-}
-
-function checkVRMMood(tmoodk) {
-  if (tmoodk == "auto") {
-    return true;
-  } else if (noMoods.includes(tmoodk)) {
-    return false;
-  } else if (currentVrm) {
-    let tmoodv = moodMap[tmoodk];
-    if (currentVrm.expressionManager.getExpressionTrackName(tmoodv)) {
-      return true;
-    } else if (currentVrm.expressionManager.getExpressionTrackName(tmoodk)) {
-      return true;
-    } else {
-      noMoods.push(tmoodk);
-      return false;
-    }
-  } else {
-    return false;
   }
 }
 

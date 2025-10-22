@@ -17,7 +17,7 @@ There are 2 states for the GUI:
    - Rotate Canvas
    - Grab Move Canvas Position
    - Select Camera / Config
-   - Select Model / Mood
+   - Select Model
    - Apply Effects
    - Open Setting
  - Display
@@ -30,7 +30,7 @@ There are 2 states for the GUI:
  - Select Config
  - Create / Remove / Update Config
  - Modify
-   - Select Model / Mood
+   - Select Model
    - Head Position Rotation Boundary
    - Left Right Eye Blink Threshold
    - Left Right Iris Boundary

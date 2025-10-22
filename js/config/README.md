@@ -11,5 +11,4 @@ Config manager will handle the config files that save different conditions for d
 ## Config Content
 
  - Target `VRM` File
- - Mood
  - Landmark Mapping Settings

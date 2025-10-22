@@ -12,7 +12,6 @@ function getDefaultInfo() {
         "x": 0,
         "y": 0,
         "z": 0, // -1 < x,y,z < 1
-        "auto": 0,
         "tilt": 0,
         "lean": 0,
         "leftWristX": 0,

@@ -173,68 +173,44 @@ function extractMouthEyes(keys) {
         'p': {},
         'e': {}
     };
-    if (getCMV("MOOD") != "fun") {
-        // mouth
-        let mouthRatio = ratioLimit((keys['mouth'] - getCMV("MOUTH_OPEN_OFFSET")) * getCMV('MOUTH_RATIO'));
-        meinfo['b']['aa'] = mouthRatio;
-        // irises
-        let irisYawSource = keys['irisPos'];
-        let irisPitchSource = keys['irisPosVertical'] ?? 0;
-        let irisBaseRatio = getCMV('IRIS_POS_RATIO');
-        let irisY = (irisYawSource - getCMV('IRIS_POS_OFFSET')) * irisBaseRatio;
-        let irisX = - (irisPitchSource - getCMV('IRIS_POS_VERTICAL_OFFSET')) * irisBaseRatio * getCMV('IRIS_POS_VERTICAL_RATIO');
-        meinfo['r']['rightEye'] = [irisX, irisY, 0];
-        meinfo['r']['leftEye'] = [irisX, irisY, 0];
-        // brows
-        let browspos = Math.min(1, Math.max(0, keys['brows'] - getCMV("BROWS_OFFSET")) * getCMV("BROWS_RATIO"));
-        meinfo['b']['Brows up'] = browspos;
-        // auto
-        let happyThresholdForEyes = 1;
-        if (getCMV("MOOD") == "auto") {
-            let autoV = Math.max(-1, Math.min(1, keys["auto"] * getCMV("MOOD_AUTO_RATIO")));
-            let absauto = Math.max(0, Math.abs(autoV) - getCMV("MOOD_AUTO_OFFSET"));
-            let browspos = Math.min(1, Math.max(0, keys['brows'] - getCMV("BROWS_OFFSET")) * getCMV("BROWS_RATIO"));
-            let browslimit = 0.1;
-            let balFun = Math.min(browslimit, Math.max(0, browspos));
-            let balSor = Math.min(browslimit / 2, Math.max(0, (browslimit - balFun) / 2));
-            let balAng = Math.min(browslimit / 2, Math.max(0, (browslimit - balFun) / 2));
-            if (autoV < 0) {
-                meinfo['b']['angry'] = balAng;
-                meinfo['b']['sad'] = absauto + balSor;
-                meinfo['b']['happy'] = balFun;
-                meinfo['b']['ee'] = 0;
-            } else {
-                happyThresholdForEyes = 1 - absauto;
-                meinfo['b']['angry'] = balAng;
-                meinfo['b']['sad'] = balSor;
-                meinfo['b']['happy'] = absauto + balFun;
-                meinfo['b']['ee'] = absauto;
-            }
-        }
-        // eyes
-        let leo = keys['leftEyeOpen'];
-        let reo = keys['rightEyeOpen'];
-        if (getCMV("EYE_SYNC") || Math.abs(reo - leo) < getCMV('EYE_LINK_THRESHOLD')) {
-            let avgEye = (reo + leo) / 2;
-            leo = avgEye;
-            reo = avgEye;
-        }
-        if (reo < getCMV('RIGHT_EYE_CLOSE_THRESHOLD')) {
-            meinfo['b']['blinkRight'] = happyThresholdForEyes;
-        } else if (reo < getCMV('RIGHT_EYE_OPEN_THRESHOLD')) {
-            let eRatio = (reo - getCMV('RIGHT_EYE_CLOSE_THRESHOLD')) / (getCMV('RIGHT_EYE_OPEN_THRESHOLD') - getCMV('RIGHT_EYE_CLOSE_THRESHOLD'));
-            meinfo['b']['blinkRight'] = ratioLimit((happyThresholdForEyes - eRatio) * getCMV('RIGHT_EYE_SQUINT_RATIO'));
-        } else {
-            meinfo['b']['blinkRight'] = 0;
-        }
-        if (leo < getCMV('LEFT_EYE_CLOSE_THRESHOLD')) {
-            meinfo['b']['blinkLeft'] = happyThresholdForEyes;
-        } else if (leo < getCMV('LEFT_EYE_OPEN_THRESHOLD')) {
-            let eRatio = (leo - getCMV('LEFT_EYE_CLOSE_THRESHOLD')) / (getCMV('LEFT_EYE_OPEN_THRESHOLD') - getCMV('LEFT_EYE_CLOSE_THRESHOLD'));
-            meinfo['b']['blinkLeft'] = ratioLimit((happyThresholdForEyes - eRatio) * getCMV('LEFT_EYE_SQUINT_RATIO'));
-        } else {
-            meinfo['b']['blinkLeft'] = 0;
-        }
+    // mouth
+    let mouthRatio = ratioLimit((keys['mouth'] - getCMV("MOUTH_OPEN_OFFSET")) * getCMV('MOUTH_RATIO'));
+    meinfo['b']['aa'] = mouthRatio;
+    // irises
+    let irisYawSource = keys['irisPos'];
+    let irisPitchSource = keys['irisPosVertical'] ?? 0;
+    let irisBaseRatio = getCMV('IRIS_POS_RATIO');
+    let irisY = (irisYawSource - getCMV('IRIS_POS_OFFSET')) * irisBaseRatio;
+    let irisX = - (irisPitchSource - getCMV('IRIS_POS_VERTICAL_OFFSET')) * irisBaseRatio * getCMV('IRIS_POS_VERTICAL_RATIO');
+    meinfo['r']['rightEye'] = [irisX, irisY, 0];
+    meinfo['r']['leftEye'] = [irisX, irisY, 0];
+    // brows
+    let browspos = Math.min(1, Math.max(0, keys['brows'] - getCMV("BROWS_OFFSET")) * getCMV("BROWS_RATIO"));
+    meinfo['b']['Brows up'] = browspos;
+    // eyes
+    let happyThresholdForEyes = 1;
+    let leo = keys['leftEyeOpen'];
+    let reo = keys['rightEyeOpen'];
+    if (getCMV("EYE_SYNC") || Math.abs(reo - leo) < getCMV('EYE_LINK_THRESHOLD')) {
+        let avgEye = (reo + leo) / 2;
+        leo = avgEye;
+        reo = avgEye;
+    }
+    if (reo < getCMV('RIGHT_EYE_CLOSE_THRESHOLD')) {
+        meinfo['b']['blinkRight'] = happyThresholdForEyes;
+    } else if (reo < getCMV('RIGHT_EYE_OPEN_THRESHOLD')) {
+        let eRatio = (reo - getCMV('RIGHT_EYE_CLOSE_THRESHOLD')) / (getCMV('RIGHT_EYE_OPEN_THRESHOLD') - getCMV('RIGHT_EYE_CLOSE_THRESHOLD'));
+        meinfo['b']['blinkRight'] = ratioLimit((happyThresholdForEyes - eRatio) * getCMV('RIGHT_EYE_SQUINT_RATIO'));
+    } else {
+        meinfo['b']['blinkRight'] = 0;
+    }
+    if (leo < getCMV('LEFT_EYE_CLOSE_THRESHOLD')) {
+        meinfo['b']['blinkLeft'] = happyThresholdForEyes;
+    } else if (leo < getCMV('LEFT_EYE_OPEN_THRESHOLD')) {
+        let eRatio = (leo - getCMV('LEFT_EYE_CLOSE_THRESHOLD')) / (getCMV('LEFT_EYE_OPEN_THRESHOLD') - getCMV('LEFT_EYE_CLOSE_THRESHOLD'));
+        meinfo['b']['blinkLeft'] = ratioLimit((happyThresholdForEyes - eRatio) * getCMV('LEFT_EYE_SQUINT_RATIO'));
+    } else {
+        meinfo['b']['blinkLeft'] = 0;
     }
     return meinfo;
 }
